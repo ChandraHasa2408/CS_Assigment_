@@ -1,3 +1,6 @@
+//Chandra Hasa
+//201ME336
+
 #include<stdio.h>
 #include<unistd.h>
 #include<stdlib.h>
