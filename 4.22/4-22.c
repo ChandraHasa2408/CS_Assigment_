@@ -16,8 +16,6 @@ int *arr; // array for storing arguments from command line
 float average;
 int minimum;
 int maximum;
-float median;
-float std_dev;
 
 //Thread1 for calculating average
 void *avg()
