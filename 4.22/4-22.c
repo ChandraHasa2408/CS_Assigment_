@@ -1,67 +1,119 @@
 #include<stdio.h>
+#include<unistd.h>
+#include<stdlib.h>
 #include<pthread.h>
-int arr[50],n,i;
+#include<stdbool.h>
+#include<math.h>
 
-void *th()
+//Global variables
+int n;    // variable for storing no of data elements passed on command line
+int *arr; // array for storing arguments from command line
+
+// average , minimum, maximum, median and standard deviation (std_dev) variables stored globally.
+float average;
+int minimum;
+int maximum;
+float median;
+float std_dev;
+
+//Thread1 for calculating average
+void *avg()
 {
-	int sum=0;
-	float average;
-	printf("enter your number :=");
-	scanf("%d",&n);
-	for(i=0;i<n;i++)
-	{
-		printf("Enter the NUM: ");
-		scanf("%d",&arr[i]);
-	}
-	for(i=0;i<n;i++)
-		{
-			sum=sum+arr[i];
-		}
-	average=sum/n;
-	printf("The average value is:%f",average);
+    int i;
+    float sum = 0;
+
+    for (i =0; i< n; i++)
+    {
+        sum = sum + arr[i];
+    }
+    average = sum/n;
+    
+    pthread_exit(NULL);
 }
-void *th1()
+
+//Thread2 for calculating minimum value
+void *min()
 {
+    int i;
+    minimum = arr[0];
 
-
-	int temp=arr[0];
-	for(int i=1;i<n;i++)
-		{
-			if(temp>arr[i])
-			{
-			temp=arr[i];
-			}
-		}
-	printf("\nThe Minimum  value is:=%d",temp);
-
+    for (i =0; i< n;i++)
+    {
+        if (minimum > arr[i])
+            minimum = arr[i];
+    }
+    
+    pthread_exit(NULL);
 }
-void *th2()
-{
 
-	int temp=arr[0];
-	for(int i=1;i<n;i++)
-		{
-			if(temp<arr[i])
-			{
-			temp=arr[i];
-			}
-		}
-	printf("\nThe Maximum  value is:=%d",temp);
-	}
-int main()
+//Thread3 for calculating maximum value
+void *max()
 {
-int n,i;
-pthread_t t1;
-pthread_t t2;
-pthread_t t3;
-	n=pthread_create(&t1,NULL,&th,NULL);
-	pthread_join(t1,NULL);
-	//printf("\n done and my value is %d",n);
-	n=pthread_create(&t2,NULL,&th1,NULL);
-        pthread_join(t2,NULL);
-	n=pthread_create(&t3,NULL,&th2,NULL);
-        
-	 pthread_join(t2,NULL);
-         pthread_join(t3,NULL);
+    int i;
+    maximum = arr[0];
 
+    for (i=0; i< n; i++)
+    {
+        if (maximum < arr[i])
+            maximum = arr[i];
+    }
+    
+    pthread_exit(NULL);
+}
+
+
+
+//main function
+void main(int argc, char *argv[])
+{
+    int i;
+    //The data elements passed on the command line.
+    n = argc-1;
+
+    //creating a dynamic array to store n elements.
+    arr = (int *) malloc(sizeof(int)*n);
+
+    //Converting the command line argument from string into integer.
+    for (i=1; i < argc; i++)
+    {   
+        arr[i-1] = atoi(argv[i]);
+    }   
+
+    printf("\nThe number of elements passed on the command line are: %d\n",n);
+    printf("\nThe entered elements are: \n");
+    for (i=0;i<n;i++)
+    {
+        printf("%d ",arr[i]);
+    }
+ 
+    printf("\n\n");
+
+    // Declaring five worker threads t1,t2,t3,t4,t5.
+    pthread_t t1;
+    pthread_t t2;
+    pthread_t t3;
+
+
+    //creating threads
+    pthread_create(&t1,NULL,&avg,NULL);
+    pthread_join(t1,NULL);
+
+    pthread_create(&t2,NULL,&min,NULL);
+    pthread_join(t2,NULL);
+
+    pthread_create(&t3,NULL,&max,NULL);
+    pthread_join(t3,NULL);
+    
+
+
+
+    //main of the parent thread
+    /*The parent thread will output the result once the workers
+    have exited*/
+
+    printf("The average value is %f\n",average);
+    printf("The minimum value is %d\n",minimum);
+    printf("The maximum value is %d\n",maximum);
+  
+    printf("\n\n");
 }
