@@ -1,8 +1,8 @@
 // CS252 Operating systems minor
 // Solution to Question 3.21
 // Program to print the Collatz conjecture series.
-// Kashish khandelwal
-// 201ME327
+// Munduri Chandra Hasa
+// 201ME336
 
 #include <stdio.h>
 #include <unistd.h>
